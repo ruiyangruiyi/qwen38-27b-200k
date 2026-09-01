@@ -4,6 +4,15 @@
 生产参数固定: 200K + KV_MEM 4.5G + chunk 2048 + DFlash2 + PREFIX_CACHE
 """
 import subprocess, sys, time, urllib.request, os
+# 本地自用版：自动加载同目录 .env（该文件 gitignore，绝不进仓库）
+from pathlib import Path
+_env = Path(__file__).parent / '.env'
+if _env.exists():
+    for line in _env.read_text().splitlines():
+        line = line.strip()
+        if line and not line.startswith('#') and '=' in line:
+            k, v = line.split('=', 1)
+            os.environ.setdefault(k.strip(), v.strip())
 
 # 远程主机配置从环境变量读（绝不硬编码密码）：
 #   QWEN_SSH_HOST（你的服务器地址）

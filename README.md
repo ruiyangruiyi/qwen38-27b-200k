@@ -9,7 +9,7 @@
 - **200K 上下文**（KVarN 4/2-bit KV + DFlash2 投机解码组合，原作者没做过的配置）
 - **实测数据**：空载 327 c/s / 真实对话 139 c/s / 76K 捞针 28s / 272 条消息会话首 token 2.7s
 - **prefix cache**：turn-2 从 16s → 0.6s（27 倍）
-- **生产级守护链**：三层 supervisor 自动拉活 + 开机自启
+- **生产级守护链**：三层 supervisor 自动拉活（开机后一条命令手动拉起）
 
 ## 快速开始
 
@@ -29,11 +29,18 @@ scripts/
   start_qwen.sh       # 一键启动（生产参数内含）
   vllm_supervisor.sh  # vLLM 守护（挂掉自动拉活）
   keeper_supervisor.sh# 守护链根（拉活整条链）
-  qwenctl.py          # 远程管理工具（start/stop/status/test）
+  socat_keeper.sh     # 6006 端口转发守护
+  qwenctl.py          # 远程管理（start/stop/status/test；本地 .env 读连接配置，.env 不进 git）
+patches/              # vLLM 0.27.1 全套补丁（从生产机原样同步）
+  ├─ kvarn-*.patch        # KVarN 4/2-bit KV cache 移植
+  ├─ dflash2-*.patch      # DFlash2 投机解码
+  ├─ install.sh           # 一键安装到 venv
+  └─ _check_applied.py    # 补丁应用状态自检
 docs/
   deployment-notes.md # 完整部署笔记（三天踩坑全记录）
-patches/              # requantize 修复补丁（整理中）
 ```
+
+新机部署顺序：`patches/install.sh`（补丁）→ `scripts/start_qwen.sh`（起服务）→ 需要守护链时再跑 `qwenctl.py start`。
 
 ## 踩坑速查
 
