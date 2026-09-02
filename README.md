@@ -42,6 +42,8 @@ docs/
 
 新机部署顺序：`patches/install.sh`（补丁）→ `scripts/start_qwen.sh`（起服务）→ 需要守护链时再跑 `qwenctl.py start`。
 
+从 Mac 管新机一条命令（scp qwenctl.py 过去+目录校验）：`python3 scripts/qwenctl.py install`（0902 新增，自启钩子已废弃，install 只做部署）
+
 ## 踩坑速查
 
 | 症状 | 原因 | 解法 |
